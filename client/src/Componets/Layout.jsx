@@ -7,6 +7,7 @@ const Layout = () => {
     <>
         <main>
             <Header/>
+            {/* The nested route components will be rendered here */}
             <Outlet/>
         </main>
     </>

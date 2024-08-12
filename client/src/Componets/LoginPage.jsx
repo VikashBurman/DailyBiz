@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useContext, useState,useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from './UserContext';
 
 const LoginPage = () => {
   const[username,setUserName] = useState("");
   const[password,setPassword] = useState("");
   const[redirect,setRedirect] = useState(false)
+  const{setUserInfo} = useContext(UserContext);
   // A hook from React Router that allows you to programmatically navigate between routes.
   const navigate = useNavigate();
 
@@ -24,15 +26,24 @@ const LoginPage = () => {
     });
     // console.log(response)
     if(response.ok){
+      //if login is succesfull 
+      response.json().then(userInfo =>{
+        setUserInfo(userInfo);
         setRedirect(true);
+      })
+        
     }else{
+      //if login is failed 
       alert('wrong credentials');
     }
   };
   //: If redirect is true, navigate to the home route ('/').
-  if(redirect){
-    return  navigate('/');
-  }
+  useEffect(() => {
+    if (redirect) {
+      navigate('/'); // Perform navigation after render
+    }
+  }, [redirect, navigate]); // Dependency array
+  
   return (
     <div className="mt-28 ">
       <div className="flex w-96 max-sm:w-72  flex-col space-y-5 rounded-lg border py-10 px-5 shadow-xl mx-auto">
@@ -63,7 +74,7 @@ const LoginPage = () => {
 
           <div className="relative mt-2 w-full">
             <input
-              type="text"
+              type="password"
               id="password"
               className="border-1 peer block w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-2.5 pb-2.5 pt-4 text-sm text-gray-900 focus:border-blue-600 focus:outline-none focus:ring-0"
               placeholder=" "

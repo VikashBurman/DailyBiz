@@ -13,7 +13,11 @@ const IndexPage = () => {
   }, []);
 
   return <>
-  {posts.length > 0 && posts.map((post) => (<Post {...post}/>))}
+  {/* {posts.length > 0 && posts.map((post) => <Post key={post.id} {...post} />)
+  } */}
+  {posts.length > 0 && posts.map((post, index) => (
+      <Post key={post.id || index} {...post} />
+    ))}
   </>;
 };
 

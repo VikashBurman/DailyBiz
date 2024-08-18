@@ -1,9 +1,11 @@
-import { React, useEffect, useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { React, useEffect, useState,useRef } from "react";
+import JoditEditor from "jodit-react";
 import { Navigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const EditPost = () => {
+  
+  const editor = useRef(null);
   const { id } = useParams();
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
@@ -12,29 +14,6 @@ const EditPost = () => {
 //   const[cover,setCover] = useState("");
   const [redirect, setRedirect] = useState(false);
 
-  const toolbarOptions = [
-    ["bold", "italic", "underline", "strike"], // toggled buttons
-    ["blockquote", "code-block"],
-    ["link", "image", "video", "formula"],
-
-    [{ header: 1 }, { header: 2 }], // custom button values
-    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-    [{ script: "sub" }, { script: "super" }], // superscript/subscript
-    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-    [{ direction: "rtl" }], // text direction
-
-    [{ size: ["small", false, "large", "huge"] }], // custom dropdown
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-    [{ font: [] }],
-    [{ align: [] }],
-
-    ["clean"], // remove formatting button
-  ];
-  const modules = {
-    toolbar: toolbarOptions,
-  };
 
   useEffect(() => {
     fetch("http://localhost:4000/post/" + id).then((response) => {
@@ -47,6 +26,7 @@ const EditPost = () => {
   }, []);
 
   const updatePost = async(e) => {
+
     e.preventDefault();
     const data = new FormData();
     data.set('title',title);
@@ -64,6 +44,7 @@ const EditPost = () => {
         credentials:'include',
     })
     if(response.ok){
+          toast.success("Post Updated Successfully");
          setRedirect(true);
     }
    
@@ -72,7 +53,7 @@ const EditPost = () => {
     return <Navigate to={"/post/"+id} />;
   }
   return (
-    <section className="flex items-center mt-10 ml-10">
+    <section className="flex items-center m-10 p-2  max-sm:m-8 justify-center max-sm:w-[90%]">
       <form onSubmit={updatePost}>
         <div className="mb-6">
           <input
@@ -82,7 +63,7 @@ const EditPost = () => {
             }}
             type="text"
             placeholder="Tittle"
-            id="default-input"
+            id="title"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
           />
         </div>
@@ -94,7 +75,7 @@ const EditPost = () => {
             }}
             placeholder="Summary"
             type="text"
-            id="default-input"
+            id="summary"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
           />
         </div>
@@ -106,19 +87,20 @@ const EditPost = () => {
             }}
             placeholder="choose file"
             type="file"
-            id="default-input"
+            id="files"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
           />
         </div>
-        <ReactQuill
-          theme="snow"
+        <div id="text-editor">
+        <JoditEditor
+          ref={editor}
           value={content}
           onChange={(newValue) => {
             setContent(newValue);
           }}
-          modules={modules}
         />
-        <button className="mt-2 rounded-sm bg-gray-600 p-2 font-semibold text-white w-full ">
+        </div>
+        <button className="mt-2 rounded-sm bg-gray-600 p-2 font-semibold text-white w-full text-center">
           Update post
         </button>
       </form>

@@ -18,8 +18,8 @@ const PostPage = () => {
   return (
     <>
       <div>
-        <div class="max-w-screen-xl mx-auto p-5 sm:p-8 md:p-12 relative">
-          <h1 href="#" class="text-gray-900 font-bold text-3xl text-center">
+        <div className="max-w-screen-lg mx-auto p-5 sm:p-8 md:p-12 relative">
+          <h1 href="#" className="text-gray-900 font-bold text-3xl text-center">
             {postInfo.title}
           </h1>
           <p className="text-center">
@@ -45,22 +45,22 @@ const PostPage = () => {
             />
           </div>
 
-          <div class="  mx-auto">
-            <div class="mt-3 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex leading-normal">
-              <div class="">
-                <p class="text-gray-800 font-bold text-base">
+          <div className="  mx-auto">
+            <div className="mt-3 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex leading-normal">
+              <div className="">
+                <p className="text-gray-800 font-bold text-base">
                   author:
                   <a
                     href="#"
-                    class="text-blue-600 font-medium  hover:text-blue-700 transition duration-500 ease-in-out"
+                    className="text-blue-600 font-medium  hover:text-blue-700 transition duration-500 ease-in-out"
                   >
                     {postInfo.author.username}
                   </a>
                 </p>
 
-                <p class="text-base leading-8 my-5">
+                {/* <p className="text-base leading-8 my-5"> */}
                   <div dangerouslySetInnerHTML={{ __html: postInfo.content }} />
-                </p>
+                {/* </p> */}
               </div>
             </div>
           </div>

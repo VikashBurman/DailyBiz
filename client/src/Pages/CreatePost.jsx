@@ -1,61 +1,37 @@
-import { React, useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { React, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
+import JoditEditor from "jodit-react";
 
 const CreatePost = () => {
+  const editor = useRef(null);
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
-  const[files,setFiles] = useState("");
-  const[redirect,setRedirect] = useState(false);
+  const [files, setFiles] = useState("");
+  const [redirect, setRedirect] = useState(false);
 
-  const toolbarOptions = [
-    ["bold", "italic", "underline", "strike"], // toggled buttons
-    ["blockquote", "code-block"],
-    ["link", "image", "video", "formula"],
-
-    [{ header: 1 }, { header: 2 }], // custom button values
-    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
-    [{ script: "sub" }, { script: "super" }], // superscript/subscript
-    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-    [{ direction: "rtl" }], // text direction
-
-    [{ size: ["small", false, "large", "huge"] }], // custom dropdown
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-    [{ font: [] }],
-    [{ align: [] }],
-
-    ["clean"], // remove formatting button
-  ];
-  const modules = {
-    toolbar: toolbarOptions,
-  };
-
-  const createNewPost =async(e)=>{
+  const createNewPost = async (e) => {
     // console.log(files);
     e.preventDefault();
     const data = new FormData();
-    data.set('title',title);
-    data.set('summary',summary);
-    data.set('content',content)
-    data.set('file',files[0]);
-    const response = await fetch('http://localhost:4000/post',{
-      method:'POST',
-      body:data,
-      credentials:'include',
+    data.set("title", title);
+    data.set("summary", summary);
+    data.set("content", content);
+    data.set("file", files[0]);
+    const response = await fetch("http://localhost:4000/post", {
+      method: "POST",
+      body: data,
+      credentials: "include",
     });
-    if(response.ok){
+    if (response.ok) {
       setRedirect(true);
     }
-  }
-  if(redirect){
-   return <Navigate to={'/'}/>
+  };
+  if (redirect) {
+    return <Navigate to={"/"} />;
   }
   return (
-    <section className="flex items-center mt-10 ml-10  max-sm:m-8 justify-center max-sm:w-[90%]">
+    <section className="flex items-center m-10 p-2  max-sm:m-8 justify-center max-sm:w-[90%] ">
       <form onSubmit={createNewPost}>
         <div className="mb-6">
           <input
@@ -65,7 +41,7 @@ const CreatePost = () => {
             }}
             type="text"
             placeholder="Tittle"
-            id="default-input"
+            id="title"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
           />
         </div>
@@ -77,30 +53,31 @@ const CreatePost = () => {
             }}
             placeholder="Summary"
             type="text"
-            id="default-input"
+            id="summary"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
           />
         </div>
         <div className="mb-6">
           <input
-          // value={files}
-          onChange={(e)=>{
-            setFiles(e.target.files)
-          }}
+            // value={files}
+            onChange={(e) => {
+              setFiles(e.target.files);
+            }}
             placeholder="choose file"
             type="file"
-            id="default-input"
+            id="files"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 "
           />
         </div>
-        <ReactQuill
-          theme="snow"
+        <div id="text-editor">
+        <JoditEditor
+          ref={editor}
           value={content}
           onChange={(newValue) => {
             setContent(newValue);
           }}
-          modules={modules}
         />
+        </div>
         <button className="mt-2 rounded-sm bg-gray-600 hover:bg-gray-700 p-2 font-semibold text-white w-full ">
           Create Post
         </button>

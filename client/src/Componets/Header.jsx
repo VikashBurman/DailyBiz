@@ -27,6 +27,7 @@ const Header = () => {
 
   const logout = () => {
     //The logout function logs the user out by sending a POST request to the server and then setting the username state to null.
+    toast.success("logout Sucessfully");
     fetch("http://localhost:4000/logout", {
       credentials: "include",
       method: "POST",
@@ -72,13 +73,14 @@ const Header = () => {
               >
                 Create new post
               </Link>
-              <a
+              <Link
                 onClick={logout}
+                to={'/'}
                 className="hover:text-gray-700 py-[7px] px-2.5 cursor-pointer inline-flex items-center font-medium text-sm rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-100 "
               >
                 Logout
                 <span className="text-gray-500 px-1 ">({username})</span>
-              </a>
+              </Link>
             </>
           )}
           {!username && (
@@ -132,7 +134,9 @@ const Header = () => {
                     Create new post
                   </Link>
                   <Link
+                    to={'/'}
                      onClick={logout}
+                     
                     className="hover:text-gray-700 py-[7px] px-2.5 inline-flex items-center max-sm:text-xs font-medium text-sm rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:bg-gray-100 "
                   >
                     logout

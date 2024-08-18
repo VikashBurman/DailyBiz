@@ -5,9 +5,10 @@ const User = require("./models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const multer  = require('multer')
-const uploadMiddleware = multer({ dest: 'uploads/' })
-
+const multer = require("multer");
+const uploadMiddleware = multer({ dest: "uploads/" });
+const fs = require("fs");
+const Post = require("./models/Post");
 
 //salt is a predefined salt value used to enhance password security
 const salt = bcrypt.genSaltSync(10);
@@ -23,6 +24,7 @@ app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express.json());
 //Makes it easy to read and manage cookies sent with requests.
 app.use(cookieParser());
+app.use("/uploads", express.static(__dirname + "/uploads"));
 
 //Connecting to MongoDB Atlas
 const connectToMongoDB = async () => {
@@ -77,7 +79,7 @@ app.post("/login", async (req, res) => {
       // Sets a cookie named token with the JWT and sends a JSON response with 'ok'.
       res.cookie("token", token, { httpOnly: true });
       res.json({
-        id:userDoc._id,
+        id: userDoc._id,
         username,
       });
       //In your login endpoint, the JWT is created upon successful authentication and sent to the client as a cookie, enabling the client to include the token in subsequent requests to verify the user's identity and access rights.
@@ -105,27 +107,93 @@ app.get("/profile", (req, res) => {
 });
 
 
+
 app.post("/logout", (req, res) => {
   //This line sets a cookie named token to an empty string "". This effectively clears the authentication token stored in the user's browser.
   res.cookie("token", "", { expires: new Date(0) }).json("Logout Successfully");
 });
 
-app.post('/post',uploadMiddleware.single('file'),(req,res)=>{
- 
-  console.log(req.file)
-  const {origionalname}= req.file; 
-  console.log(origionalname);
-  // const parts = origionalname.split('.');
-  // // console.log(parts);
-  // const ext = parts[parts.length-1];
-   res.json('ok');
-  // res.json({ext});
-})
+app.post("/post", uploadMiddleware.single("file"), async (req, res) => {
+  // console.log(req.file)
+  const { originalname, path } = req.file;
+  const parts = originalname.split(".");
+  const ext = parts[parts.length - 1];
+  const newPath = path + "." + ext;
+  fs.renameSync(path, newPath);
+
+  // This contains all the cookies sent by the client (e.g., the browser) with the request.
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    //f the token is valid, info will contain the decoded information from the JWT payload, such as the user's id and username.
+    if (err) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+    const { title, summary, content } = req.body;
+    const postDoc = await Post.create({
+      title,
+      summary,
+      content,
+      cover: newPath,
+      author: info.id,
+    });
+    res.json(postDoc);
+  });
+});
+
+app.get("/post", async (req, res) => {
+  const posts = await Post.find()
+    .populate("author", ["username"])
+    .sort({ createdAt: -1 })
+    .limit(20);
+  res.json(posts);
+});
+
+app.get("/post/:id", async (req, res) => {
+  const { id } = req.params;
+  const postDoc = await Post.findById(id).populate("author", ["username"]);
+  res.json(postDoc);
+});
+
+app.put("/post", uploadMiddleware.single("file"), async (req, res) => {
+  let newPath = null;
+  
+  if (req.file) {
+    const { originalname, path } = req.file;
+    const parts = originalname.split(".");
+    const ext = parts[parts.length - 1];
+    newPath = path + "." + ext;
+    fs.renameSync(path, newPath);
+  }
+
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    const { id, title, summary, content } = req.body;
+    const postDoc = await Post.findById(id);
+    const isAuthor = JSON.stringify(postDoc.author) === JSON.stringify(info.id);
+    if (!isAuthor) {
+      return res.status(400).json('You are not the author');
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      {
+        title,
+        summary,
+        content,
+        cover: newPath ? newPath : postDoc.cover
+      },
+      { new: true } // Return the updated document
+    );
+    
+    res.json(updatedPost);
+  });
+});
+
 
 app.listen(4000, () => {
   console.log("Server Started");
 });
-
-
-
-

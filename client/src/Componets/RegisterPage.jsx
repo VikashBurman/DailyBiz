@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast, { Toaster } from 'react-hot-toast';
 
 const RegisterPage = () => {
   const [username, setUserName] = useState("");
@@ -18,13 +19,18 @@ const RegisterPage = () => {
     });
     // console.log(response)
     if (response.status === 200){
-      alert("Registered Successfully");
+      // alert("Registered Successfully");
+      toast.success("Registered Successfully");
+      
     } else {
-      alert("Registartion Failed");
+      // alert("Registartion Failed");
+      toast.error("Registartion Failed");
     }
   };
 
   return (
+    <>
+    <section>
     <div className="mt-28">
       <div className="flex w-96 max-sm:w-72 flex-col space-y-5 rounded-lg border py-10 px-5 shadow-xl mx-auto">
         <div className="mx-auto mb-2 space-y-3 text-center">
@@ -73,12 +79,14 @@ const RegisterPage = () => {
             </label>
           </div>
 
-          <button className="rounded-lg bg-gray-600 py-3 font-bold text-white">
+          <button className="rounded-lg bg-gray-600 hover:bg-gray-700 py-3 font-bold text-white">
             Register
           </button>
         </form>
       </div>
     </div>
+    </section>
+    </>
   );
 };
 

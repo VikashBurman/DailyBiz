@@ -1,43 +1,47 @@
-import React from 'react'
+import React from "react";
+import { format } from "date-fns";
+import { Link } from "react-router-dom";
 
-const Post = () => {
+const Post = ({ _id, title, summary, cover, content, createdAt, author }) => {
   return (
-    <div className=" px-2 ">
-        <article className="mx-auto max-sm:px-4 my-10 flex max-w-md flex-col rounded-2xl bg-white px-4 shadow-md hover:shadow-lg cursor-pointer md:max-w-3xl md:flex-row md:items-center">
-          <div className="shrink-0 my-4 md:mr-7 md:max-w-sm ">
+    <div className="mx-auto md:max-w-[58rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-8">
+      <div className="flex flex-col gap-6 border-b-2 border-gray-300 sm:p-2 ">
+        <div className="group flex flex-col rounded-xl focus:outline-none sm:flex-row">
+        {/* hover effect hover:scale-105 focus:scale-105 transition-transform duration-200 ease-in-out  */}
+          <div className="relative h-[200px] w-full shrink-0 overflow-hidden rounded-xl sm:h-[250px] sm:w-[350px]">
             <img
-           
-              className="rounded-xl "
-              src="https://images.unsplash.com/photo-1663287695452-bf59337d8746?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw4fHx8ZW58MHx8fHw%3D&amp;auto=format&amp;fit=crop&amp;w=500&amp;q=60"
-              alt=""
+              className="absolute start-0 top-0 h-full w-full object-cover"
+              src={"http://localhost:4000/" + cover}
+              alt="Blog Image"
             />
           </div>
-          <div className="sm:py-8">
-            <a href="#" className="mb-4 max-sm:mb-2 block text-lg md:text-xl font-medium text-gray-700">
-              Long walks are helpful in decreasing stress levels
-            </a>
-            <p className="mb-6 max-sm:mb-3 text-gray-500 max-sm:text-sm">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Reprehenderit illum consequatur quia doloremque! Similique eius
-              enim nostrum totam.
-            </p>
-            <div className="flex items-center">
-              {/* <img
-                className="h-10 w-10 rounded-full object-cover"
-                src="/images/ddHJYlQqOzyOKm4CSCY8o.png"
-                alt="Simon Lewis"
-              /> */}
-              <p className=" w-56">
-                <a className="block font-medium text-gray-700 max-sm:text-sm">
-                  Johanson Levinsiki
-                </a>
-                <time className="text-sm max-sm:text-xs text-gray-400">2023-01-06 16:45</time>
-              </p>
-            </div>
-          </div>
-        </article>
-      </div>
-  )
-}
+          <Link to={`/post/${_id}`}>
+            <div className="flex grow flex-col p-4 sm:p-6 max-sm:p-1">
+              <h3 className="text-lg font-semibold text-gray-800 hover:text-blue-600 focus:text-blue-600 sm:text-2xl max-sm:text-lg">
+                {title}
+              </h3>
+              <p className="mt-2 text-gray-600 max-sm:text-sm  max-sm:leading-tight"> {summary}</p>
 
-export default Post
+              <div className="mt-5 ">
+                <div className="flex items-center">
+                  <div className="">
+                    <h4 className="text-sm font-semibold text-gray-600 max-sm:text-xs">
+                      {" "}
+                      by {author.username}
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      {" "}
+                      {format(new Date(createdAt), "MMM d,yyyy HH:mm")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Post;

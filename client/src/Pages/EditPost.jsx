@@ -1,14 +1,16 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
-const CreatePost = () => {
+const EditPost = () => {
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
-  const[files,setFiles] = useState("");
-  const[redirect,setRedirect] = useState(false);
+  const [files, setFiles] = useState("");
+//   const[cover,setCover] = useState("");
+  const [redirect, setRedirect] = useState(false);
 
   const toolbarOptions = [
     ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -34,29 +36,44 @@ const CreatePost = () => {
     toolbar: toolbarOptions,
   };
 
-  const createNewPost =async(e)=>{
-    // console.log(files);
+  useEffect(() => {
+    fetch("http://localhost:4000/post/" + id).then((response) => {
+      response.json().then((postInfo) => {
+        setTitle(postInfo.title);
+        setContent(postInfo.content);
+        setSummary(postInfo.summary);
+      });
+    });
+  }, []);
+
+  const updatePost = async(e) => {
     e.preventDefault();
     const data = new FormData();
     data.set('title',title);
     data.set('summary',summary);
     data.set('content',content)
-    data.set('file',files[0]);
-    const response = await fetch('http://localhost:4000/post',{
-      method:'POST',
-      body:data,
-      credentials:'include',
-    });
-    if(response.ok){
-      setRedirect(true);
+    data.set('id',id);
+
+    if(files?.[0]){
+        data.set('file',files?.[0]);
     }
-  }
-  if(redirect){
-   return <Navigate to={'/'}/>
+    
+    const response = await fetch("http://localhost:4000/post",{
+        method:'PUT',
+        body:data,
+        credentials:'include',
+    })
+    if(response.ok){
+         setRedirect(true);
+    }
+   
+  };
+  if (redirect) {
+    return <Navigate to={"/post/"+id} />;
   }
   return (
-    <section className="flex items-center mt-10 ml-10  max-sm:m-8 justify-center max-sm:w-[90%]">
-      <form onSubmit={createNewPost}>
+    <section className="flex items-center mt-10 ml-10">
+      <form onSubmit={updatePost}>
         <div className="mb-6">
           <input
             value={title}
@@ -83,10 +100,10 @@ const CreatePost = () => {
         </div>
         <div className="mb-6">
           <input
-          // value={files}
-          onChange={(e)=>{
-            setFiles(e.target.files)
-          }}
+            // value={files}
+            onChange={(e) => {
+              setFiles(e.target.files);
+            }}
             placeholder="choose file"
             type="file"
             id="default-input"
@@ -101,12 +118,12 @@ const CreatePost = () => {
           }}
           modules={modules}
         />
-        <button className="mt-2 rounded-sm bg-gray-600 hover:bg-gray-700 p-2 font-semibold text-white w-full ">
-          Create Post
+        <button className="mt-2 rounded-sm bg-gray-600 p-2 font-semibold text-white w-full ">
+          Update post
         </button>
       </form>
     </section>
   );
 };
 
-export default CreatePost;
+export default EditPost;

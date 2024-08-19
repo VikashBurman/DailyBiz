@@ -15,6 +15,7 @@ const PostPage = () => {
     });
   }, []);
   if (!postInfo) return "";
+
   return (
     <>
       <div>
@@ -24,12 +25,12 @@ const PostPage = () => {
           </h1>
           <p className="text-gray-800 text-lg font-medium">
             author:
-              {postInfo.author.username}
+            {postInfo.author.username}
           </p>
-            <time className="text-[10px] max-sm:text-xs  leading-tight  text-gray-400">
-              {format(new Date(postInfo.createdAt), "MMM d,yyyy HH:mm")}
-            </time>
-          
+          <time className="text-[10px] max-sm:text-xs  leading-tight  text-gray-400">
+            {format(new Date(postInfo.createdAt), "MMM d,yyyy HH:mm")}
+          </time>
+
           {userInfo.id === postInfo.author._id && (
             <div className="items-center text-center my-1">
               <Link
@@ -38,6 +39,7 @@ const PostPage = () => {
               >
                 Edit this post
               </Link>
+              {/* <button onClick={func}>Delete</button> */}
             </div>
           )}
           <div

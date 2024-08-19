@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { Link } from "react-router-dom";
 
 const Post = ({ _id, title, summary, cover, content, createdAt, author }) => {
+  
   return (
     <div className="mx-auto md:max-w-[58rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-8">
       <div className="flex flex-col gap-6 border-b-2 border-gray-300 sm:p-2 ">

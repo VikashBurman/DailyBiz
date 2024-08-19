@@ -1,12 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams,useNavigate  } from "react-router-dom";
 import { format } from "date-fns";
 import { UserContext } from "../Componets/UserContext";
+import toast, { Toaster } from "react-hot-toast";
+
+//THIS IS EDITPOST PAGE
 
 const PostPage = () => {
   const [postInfo, setPostInfo] = useState(null);
   const { userInfo } = useContext(UserContext);
   const { id } = useParams();
+  const navigate = useNavigate();
+  
   useEffect(() => {
     fetch(`http://localhost:4000/post/${id}`).then((response) => {
       response.json().then((postInfo) => {
@@ -16,14 +21,33 @@ const PostPage = () => {
   }, []);
   if (!postInfo) return "";
 
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/post/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        toast.success("Post deleted successfully")
+        navigate("/"); 
+      } else {
+        // console.error("Failed to delete the post");
+        toast.error("Failed to delete the post")
+      }
+    } catch (error) {
+      console.error("Failed to delete the post", error);
+    }
+  };
+
   return (
     <>
       <div>
         <div className=" p-5 sm:p-8 md:p-12 relative flex flex-col  justify-center items-center">
-          <h1 href="#" className="text-gray-900 font-bold text-3xl text-center">
+          <h1 href="#" className="text-gray-900 font-bold text-4xl text-center">
             {postInfo.title}
           </h1>
-          <p className="text-gray-800 text-lg font-medium">
+          <p className="text-gray-800 text-base font-medium lowercase">
             author:
             {postInfo.author.username}
           </p>
@@ -39,12 +63,17 @@ const PostPage = () => {
               >
                 Edit this post
               </Link>
-              {/* <button onClick={func}>Delete</button> */}
+              <button
+                onClick={handleDelete}
+                className="ml-2 py-1.5 px-3 inline-flex items-center font-medium text-sm rounded-md bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700 disabled:opacity-50 disabled:pointer-events-none"
+              >
+                Delete
+              </button>
             </div>
           )}
           <div
             className="h-64 text-center  overflow-hidden"
-            style={{ height: "400px" }}
+            style={{ height: "300px" }}
           >
             <img
               src={`http://localhost:4000/${postInfo.cover}`}

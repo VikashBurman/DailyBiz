@@ -10,7 +10,7 @@ const Post = ({ _id, title, summary, cover, content, createdAt, author }) => {
         {/* hover effect hover:scale-105 focus:scale-105 transition-transform duration-200 ease-in-out  */}
           <div className="relative h-[200px] w-full shrink-0 overflow-hidden rounded-xl sm:h-[250px] sm:w-[350px]">
             <img
-              className="absolute start-0 top-0 h-full w-full object-cover"
+              className="absolute  w-full h-full"
               src={"http://localhost:4000/" + cover}
               alt="Blog Image"
             />

@@ -107,7 +107,6 @@ app.get("/profile", (req, res) => {
 });
 
 
-
 app.post("/logout", (req, res) => {
   //This line sets a cookie named token to an empty string "". This effectively clears the authentication token stored in the user's browser.
   res.cookie("token", "", { expires: new Date(0) }).json("Logout Successfully");

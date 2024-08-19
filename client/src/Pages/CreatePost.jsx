@@ -1,6 +1,7 @@
 import { React, useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import JoditEditor from "jodit-react";
+import toast, { Toaster } from "react-hot-toast";
 
 const CreatePost = () => {
   const editor = useRef(null);
@@ -24,6 +25,7 @@ const CreatePost = () => {
       credentials: "include",
     });
     if (response.ok) {
+      toast.success("Post Created Succesfully");
       setRedirect(true);
     }
   };

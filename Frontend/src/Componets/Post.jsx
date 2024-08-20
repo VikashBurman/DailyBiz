@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 const Post = ({ _id, title, summary, cover, content, createdAt, author }) => {
   
   return (
-    <div className="mx-auto md:max-w-[58rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-8 ">
-      <div className="flex flex-col gap-6 border-b-2 border-gray-300 sm:p-2 ">
+    <div className="mx-auto md:max-w-[58rem] px-4 py-10 sm:px-6 lg:px-4 lg:py-4 shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out rounded-xl">
+      <div className="flex flex-col gap-6  border-gray-300 sm:p-2">
         <div className="group flex flex-col rounded-xl focus:outline-none sm:flex-row">
         {/* hover effect hover:scale-105 focus:scale-105 transition-transform duration-200 ease-in-out  */}
           <div className="relative h-[200px] w-full shrink-0 overflow-hidden rounded-xl sm:h-[250px] sm:w-[350px]">
@@ -25,7 +25,7 @@ const Post = ({ _id, title, summary, cover, content, createdAt, author }) => {
               </h3>
               <p className="mt-2 text-gray-600 max-sm:text-sm  max-sm:leading-tight"> {summary}</p>
 
-              <div className="mt-5 ">
+              <div className="mt-5">
                 <div className="flex items-center">
                   <div className="">
                     <h4 className="text-sm font-semibold text-gray-600 max-sm:text-xs">

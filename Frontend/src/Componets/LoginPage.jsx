@@ -14,7 +14,7 @@ const LoginPage = () => {
   const login = async (e) => {
     e.preventDefault();
     // The await keyword is used to wait for the response before proceeding.
-    const response = await fetch("http://localhost:4000/login", {
+    const response = await fetch("https://blogapp-gsdt.onrender.com/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

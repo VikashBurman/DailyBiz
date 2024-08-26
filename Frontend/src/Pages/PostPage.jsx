@@ -13,7 +13,7 @@ const PostPage = () => {
   const navigate = useNavigate();
   
   useEffect(() => {
-    fetch(`http://localhost:4000/post/${id}`).then((response) => {
+    fetch(`https://blogapp-gsdt.onrender.com/post/${id}`).then((response) => {
       response.json().then((postInfo) => {
         setPostInfo(postInfo);
       });
@@ -23,7 +23,7 @@ const PostPage = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/post/${id}`, {
+      const response = await fetch(`https://blogapp-gsdt.onrender.com/post/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -76,7 +76,7 @@ const PostPage = () => {
             style={{ height: "300px" }}
           >
             <img
-              src={`http://localhost:4000/${postInfo.cover}`}
+              src={`https://blogapp-gsdt.onrender.com/${postInfo.cover}`}
               alt="article photo"
               className="object-contain w-full h-full "
             />

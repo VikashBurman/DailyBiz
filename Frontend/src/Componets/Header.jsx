@@ -14,7 +14,7 @@ const Header = () => {
   //how to know if we are logged in using token
   //It runs after the component renders.
   useEffect(() => {
-    fetch("http://localhost:4000/profile", {
+    fetch("https://blogapp-gsdt.onrender.com/profile", {
       //credentials option tells the browser to include cookies (such as the JWT token stored as a cookie) in the request,
       credentials: "include",
     }).then((response) => {
@@ -28,7 +28,7 @@ const Header = () => {
   const logout = () => {
     //The logout function logs the user out by sending a POST request to the server and then setting the username state to null.
     toast.success("logout Sucessfully");
-    fetch("http://localhost:4000/logout", {
+    fetch("https://blogapp-gsdt.onrender.com/logout", {
       credentials: "include",
       method: "POST",
     });

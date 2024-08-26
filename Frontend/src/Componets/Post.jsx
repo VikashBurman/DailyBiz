@@ -14,7 +14,7 @@ const Post = ({ _id, title, summary, cover, content, createdAt, author }) => {
           <div className="relative h-[200px] w-full shrink-0 overflow-hidden rounded-xl sm:h-[250px] sm:w-[350px]">
             <img
               className="absolute  w-full h-full"
-              src={"http://localhost:4000/" + cover}
+              src={"https://blogapp-gsdt.onrender.com/" + cover}
               alt="Blog Image"
             />
           </div>

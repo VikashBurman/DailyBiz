@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
+const DATABASE = process.env.DATABASE;
 
-const mongoURI =
-  "mongodb+srv://vikasburman37:OG50TLaYMUgsQD6E@cluster0.nfs4qob.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const mongoURI = `${DATABASE}`;
 
-//Connecting to MongoDB Atlas
 const connectToMongoDB = async () => {
   try {
     await mongoose.connect(mongoURI);
+    // console.log(DATABASE);
+
     console.log("DB Connected👍");
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);

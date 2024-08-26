@@ -8,7 +8,7 @@ const RegisterPage = () => {
     // : Prevents the default form submission behavior, which would cause a page reload
     e.preventDefault();
     // Makes a network request to the specified URL and waits for the response.
-    const response = await fetch("http://localhost:4000/register", {
+    const response = await fetch("https://blogapp-gsdt.onrender.com/register", {
       method: "POST",
       // Sets the request headers, indicating that the request body contains JSON data.
       headers: {

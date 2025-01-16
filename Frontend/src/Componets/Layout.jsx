@@ -1,4 +1,3 @@
-import React from 'react'
 import Header from './Header'
 import { Outlet } from 'react-router-dom'
 
@@ -7,7 +6,6 @@ const Layout = () => {
     <>
         <main>
             <Header/>
-            {/* The nested route components will be rendered here */}
             <Outlet/>
         </main>
     </>

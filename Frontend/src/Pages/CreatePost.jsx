@@ -1,7 +1,8 @@
-import { React, useRef, useState } from "react";
+import {  useRef, useState } from "react";
 import { Navigate } from "react-router-dom";
 import JoditEditor from "jodit-react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+//to create a new post
 
 const CreatePost = () => {
   const editor = useRef(null);
@@ -10,6 +11,7 @@ const CreatePost = () => {
   const [content, setContent] = useState("");
   const [files, setFiles] = useState("");
   const [redirect, setRedirect] = useState(false);
+  const Backend_URL = import.meta.env.VITE_BACKEND_URL;
 
   const createNewPost = async (e) => {
     // console.log(files);
@@ -19,7 +21,7 @@ const CreatePost = () => {
     data.set("summary", summary);
     data.set("content", content);
     data.set("file", files[0]);
-    const response = await fetch("https://blogapp-gsdt.onrender.com/post", {
+    const response = await fetch(`${Backend_URL}/post`, {
       method: "POST",
       body: data,
       credentials: "include",

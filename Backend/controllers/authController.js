@@ -1,4 +1,3 @@
-
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -8,16 +7,37 @@ const secret = "qwertyuiuytrtyuioiuyt";
 
 exports.register = async (req, res) => {
   const { username, password } = req.body;
+  if (!username || !password) {
+    return res
+      .status(400)
+      .json({ message: "Username and password are required" });
+  }
+
   try {
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const userDoc = await User.create({
       username,
-      password: bcrypt.hashSync(password, salt),
+      password: hashedPassword,
     });
-    res.json(userDoc);
-  } catch (e) {
-    res.status(400).json(e);
+
+    res.status(201).json({
+      message: "User registered successfully",
+      user: { id: userDoc._id, username: userDoc.username },
+    });
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
+
 
 exports.login = async (req, res) => {
   const { username, password } = req.body;

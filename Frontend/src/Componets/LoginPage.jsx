@@ -1,49 +1,52 @@
-import React, { useContext, useState, useEffect } from "react";
+import  { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [redirect, setRedirect] = useState(false);
   const { setUserInfo } = useContext(UserContext);
-  // A hook from React Router that allows you to programmatically navigate between routes.
   const navigate = useNavigate();
+  const Backend_URL = import.meta.env.VITE_BACKEND_URL;
 
   const login = async (e) => {
     e.preventDefault();
-    // The await keyword is used to wait for the response before proceeding.
-    const response = await fetch("https://blogapp-gsdt.onrender.com/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      //Converts the username and password variables into a JSON string to be sent as the request body.
-      body: JSON.stringify({ username, password }),
-      credentials: "include", //to save cookie
-      //Ensures that cookies are included in the request, allowing the server to save and use cookies for session management or authentication.
-    });
-    // console.log(response)
-    if (response.ok) {
-      //if login is succesfull
-      toast.success("login Succesfully");
-      response.json().then((userInfo) => {
-        setUserInfo(userInfo);
-        setRedirect(true);
+    if (!username || !password) {
+      toast.error("Please fill in both fields");
+      return;
+    }
+    try {
+      const response = await fetch(`${Backend_URL}/login`, { 
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: "include", 
       });
-    } else {
-      //if login is failed
-      // alert("wrong credentials");
-      toast.error("wrong credentials");
+  
+      if (response.ok) {
+        toast.success("Login Successfully");
+        
+        const userInfo = await response.json(); 
+        setUserInfo(userInfo); 
+        setRedirect(true); 
+      } else {
+        toast.error("Invalid username or password");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      toast.error("Something went wrong!");
     }
   };
-  //: If redirect is true, navigate to the home route ('/').
+  
   useEffect(() => {
     if (redirect) {
-      navigate("/"); // Perform navigation after render
+      navigate("/"); 
     }
-  }, [redirect, navigate]); // Dependency array
+  }, [redirect, navigate]); 
 
   return (
     <>

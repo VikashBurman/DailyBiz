@@ -1,4 +1,4 @@
-import { React, useEffect, useState,useRef } from "react";
+import {  useEffect, useState,useRef } from "react";
 import JoditEditor from "jodit-react";
 import { Navigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -13,10 +13,10 @@ const EditPost = () => {
   const [files, setFiles] = useState("");
 //   const[cover,setCover] = useState("");
   const [redirect, setRedirect] = useState(false);
-
+  const Backend_URL = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
-    fetch("https://blogapp-gsdt.onrender.com/post/" + id).then((response) => {
+    fetch(`${Backend_URL}/post/${id}`).then((response) => {
       response.json().then((postInfo) => {
         setTitle(postInfo.title);
         setContent(postInfo.content);
@@ -38,7 +38,7 @@ const EditPost = () => {
         data.set('file',files?.[0]);
     }
     
-    const response = await fetch("https://blogapp-gsdt.onrender.com/post",{
+    const response = await fetch(`${Backend_URL}/post`,{
         method:'PUT',
         body:data,
         credentials:'include',

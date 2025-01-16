@@ -1,39 +1,50 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Link, useParams,useNavigate  } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { UserContext } from "../Componets/UserContext";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import ShimmerPostPage from "../Componets/ShimmerPostPage";
 
-//THIS IS EDITPOST PAGE
+//after main page
 
 const PostPage = () => {
+  const Backend_URL = import.meta.env.VITE_BACKEND_URL;
   const [postInfo, setPostInfo] = useState(null);
   const { userInfo } = useContext(UserContext);
   const { id } = useParams();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
-    fetch(`https://blogapp-gsdt.onrender.com/post/${id}`).then((response) => {
-      response.json().then((postInfo) => {
-        setPostInfo(postInfo);
-      });
-    });
-  }, []);
-  if (!postInfo) return "";
+    const fetchPostData = async () => {
+      try {
+        const response = await fetch(`${Backend_URL}/post/${id}`);
+        const data = await response.json();
+        setPostInfo(data);
+      } catch (error) {
+        console.error("Error fetching post data:", error);
+      }
+    };
+
+    fetchPostData();
+  }, [id, Backend_URL]);
+
+  // Render shimmer until data is fetched
+  if (!postInfo) {
+    return <ShimmerPostPage />;
+  }
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`https://blogapp-gsdt.onrender.com/post/${id}`, {
+      const response = await fetch(`${Backend_URL}/post/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
 
       if (response.ok) {
-        toast.success("Post deleted successfully")
-        navigate("/"); 
+        toast.success("Post deleted successfully");
+        navigate("/");
       } else {
-        // console.error("Failed to delete the post");
-        toast.error("Failed to delete the post")
+        toast.error("Failed to delete the post");
       }
     } catch (error) {
       console.error("Failed to delete the post", error);
@@ -41,124 +52,53 @@ const PostPage = () => {
   };
 
   return (
-    <>
-      <div>
-        <div className=" p-5 sm:p-8 md:p-12 relative flex flex-col  justify-center items-center">
-          <h1 href="#" className="text-gray-900 font-bold text-4xl text-center">
-            {postInfo.title}
-          </h1>
-          <p className="text-blue-800 text-base font-medium lowercase">
-            author:
-            {postInfo.author.username}
+    <div>
+      <div className="p-6 sm:p-10 md:p-14 flex flex-col items-center bg-gray-50 rounded-xl shadow-lg">
+        <h1 className="text-gray-800 font-extrabold text-3xl md:text-5xl text-center leading-tight">
+          {postInfo.title}
+        </h1>
+        <div className="flex flex-col items-center mt-4">
+          <p className="text-blue-600 text-sm md:text-base font-medium">
+            Author:{" "}
+            <span className="capitalize">{postInfo.author.username}</span>
           </p>
-          <time className="text-[10px] max-sm:text-xs  leading-tight  text-gray-400">
-            {format(new Date(postInfo.createdAt), "MMM d,yyyy HH:mm")}
+          <time className="text-xs md:text-sm text-gray-500">
+            {format(new Date(postInfo.createdAt), "MMM d, yyyy HH:mm")}
           </time>
+        </div>
+        {userInfo.id === postInfo.author._id && (
+          <div className="flex gap-4 mt-6">
+            <Link
+              to={`/edit/${postInfo._id}`}
+              className="px-5 py-2 bg-gray-700 text-white rounded-md text-sm font-medium hover:bg-gray-800 transition"
+            >
+              Edit Post
+            </Link>
+            <button
+              onClick={handleDelete}
+              className="px-5 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700 transition"
+            >
+              Delete Post
+            </button>
+          </div>
+        )}
 
-          {userInfo.id === postInfo.author._id && (
-            <div className="items-center text-center my-1">
-              <Link
-                to={`/edit/${postInfo._id}`}
-                className=" py-1.5 px-3 inline-flex items-center font-medium text-sm rounded-md bg-gray-600 text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 disabled:opacity-50 disabled:pointer-events-none"
-              >
-                Edit this post
-              </Link>
-              <button
-                onClick={handleDelete}
-                className="ml-2 py-1.5 px-3 inline-flex items-center font-medium text-sm rounded-md bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:bg-red-700 disabled:opacity-50 disabled:pointer-events-none"
-              >
-                Delete
-              </button>
-            </div>
-          )}
+        <div className="w-[500px] h-[500px] mt-6 mx-auto rounded-lg overflow-hidden shadow-md">
+          <img
+            src={`${Backend_URL}/${postInfo.cover}`}
+            alt="Article Cover"
+            className="object-cover w-full h-full"
+          />
+        </div>
+
+        <div className="mt-8 bg-white p-6 rounded-lg shadow-md max-w-4xl w-full">
           <div
-            className="h-64 text-center  overflow-hidden"
-            style={{ height: "300px" }}
-          >
-            <img
-              src={`https://blogapp-gsdt.onrender.com/${postInfo.cover}`}
-              alt="article photo"
-              className="object-contain w-full h-full "
-            />
-          </div>
-
-          <div className="">
-            <div className="mt-3 bg-white rounded-b lg:rounded-b-none lg:rounded-r flex  p-4 shadow-lg leading-normal">
-                <div className="max-w-4xl">
-                  <div dangerouslySetInnerHTML={{ __html: postInfo.content }} />
-                </div>
-              
-            </div>
-          </div>
+            className="text-gray-800 leading-relaxed text-sm md:text-base"
+            dangerouslySetInnerHTML={{ __html: postInfo.content }}
+          />
         </div>
       </div>
-      <footer class="bg-white">
-        <div class="container px-6 py-8 mx-auto">
-          <div class="flex flex-col items-center text-center">
-            <Link
-              to="/"
-              className="flex items-center  px-10  font-bold   hover:opacity-90"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="size-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z"
-                />
-              </svg>
-              DailyBiz
-            </Link>
-            <p class="max-w-md mx-auto  text-gray-500 ">
-            Explore, share, and manage insightful articles on DailyBiz
-            </p>
-          </div>
-
-          <hr class="my-6 border-gray-200 " />
-
-          <div class="flex flex-col items-center sm:flex-row sm:justify-between">
-            <p class="text-sm text-gray-500">
-              © Copyright 2024. All Rights Reserved.
-            </p>
-
-            <div class="flex mt-3 -mx-2 sm:mt-0">
-              <a
-                href="#"
-                class="mx-2 text-sm text-gray-500 transition-colors duration-300 hover:text-gray-500 "
-                aria-label="Reddit"
-              >
-                {" "}
-                Teams{" "}
-              </a>
-
-              <a
-                href="#"
-                class="mx-2 text-sm text-gray-500 transition-colors duration-300 hover:text-gray-500 "
-                aria-label="Reddit"
-              >
-                {" "}
-                Privacy{" "}
-              </a>
-
-              <a
-                href="#"
-                class="mx-2 text-sm text-gray-500 transition-colors duration-300 hover:text-gray-500 "
-                aria-label="Reddit"
-              >
-                {" "}
-                Cookies{" "}
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </>
+    </div>
   );
 };
 

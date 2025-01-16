@@ -54,6 +54,7 @@ const updatePost = async (req, res) => {
   }
 
   const { token } = req.cookies;
+  
   jwt.verify(token, secret, {}, async (err, info) => {
     if (err) {
       return res.status(401).json({ error: "Invalid token" });

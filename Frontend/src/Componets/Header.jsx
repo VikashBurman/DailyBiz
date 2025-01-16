@@ -1,34 +1,28 @@
-import React, { useContext, useEffect } from "react";
+import  { useContext, useEffect } from "react";
 import { useState } from "react";
 import { GrClose } from "react-icons/gr";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { json, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { UserContext } from "./UserContext";
 import toast, { Toaster } from "react-hot-toast";
 
 const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
-  // const [username, setUserName] = useState(null);
   const { setUserInfo, userInfo } = useContext(UserContext);
-
-  //how to know if we are logged in using token
-  //It runs after the component renders.
+  const Backend_URL = import.meta.env.VITE_BACKEND_URL;
   useEffect(() => {
-    fetch("https://blogapp-gsdt.onrender.com/profile", {
-      //credentials option tells the browser to include cookies (such as the JWT token stored as a cookie) in the request,
+    fetch(`${Backend_URL}`, {
       credentials: "include",
     }).then((response) => {
       response.json().then((userInfo) => {
-        //The userInfo object should contain the user's information, including the username.
         setUserInfo(userInfo);
       });
     });
   }, []);
 
   const logout = () => {
-    //The logout function logs the user out by sending a POST request to the server and then setting the username state to null.
     toast.success("logout Sucessfully");
-    fetch("https://blogapp-gsdt.onrender.com/logout", {
+    fetch(`${Backend_URL}/logout`, {
       credentials: "include",
       method: "POST",
     });
@@ -61,9 +55,6 @@ const Header = () => {
           DailyBiz
         </Link>
         <nav className="hidden sm:flex justify-between items-center gap-2  font-semibold">
-          {/* The username variable is used to determine the user's authentication state. 
-        If the user is logged in: Show links to create a new post and log out.
-        If the user is not logged in: Show links to log in and register.*/}
           {username && (
             <>
               {/* <span>Hello {username}</span> */}

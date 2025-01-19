@@ -10,6 +10,7 @@ const LoginPage = () => {
   const { setUserInfo } = useContext(UserContext);
   const navigate = useNavigate();
   const Backend_URL = import.meta.env.VITE_BACKEND_URL;
+  // console.log(Backend_URL);
 
   const login = async (e) => {
     e.preventDefault();
